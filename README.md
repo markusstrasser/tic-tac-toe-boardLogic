@@ -143,9 +143,7 @@ Here we use [math.js matrix](https://mathjs.org/docs/datatypes/matrices.html) to
     const board = math.reshape(boardState, [size, size])
     const diagonals = [
         math.diag(board), //main diagonal 
-        boardState.filter((_, i) => math //right upper -> left lower diagonal
-            .range(start = size - 1, end = 2 * size, step = size-1, includeEnd = true) /*indices*/
-            .toArray().includes(i)),
+        math.diag(Array(size).fill(0).map((_, i)=> math.row(board, i)[0].reverse())) /*Symmetry!😍🙌*/
     ]
     
     /*fold rows, columns, diagonals into one array of [ [0,1, 1], [0, 1, 2], ....] with length n*2 + 2*/
@@ -179,7 +177,29 @@ Good luck with finding a more elegant solution for this problem - I haven't seen
 
 ## Better Ideas?
 
-Last problem: **I haven't found a way to abstract over that non-main diagonal in a clean paradigmatic/mathematically sound way**. I could imagine flipping the matrix vertically and then using `.diag` again on the symmetric counterpart, but didn't find the method in the lib that can do that.
+~~Last problem: **I haven't found a way to abstract over that non-main diagonal in a clean paradigmatic/mathematically sound way**. I could imagine flipping the matrix vertically and then using `.diag` again on the symmetric counterpart, but didn't find the method in the lib that can do that.~~
+
+**Solved:** Found a great way to get the opposite diagonal without much hacky code
+
+Previously I had to do this, which is adhoc and adds incidental complexity (*the added parameters*):
+
+```javascript
+boardState.filter((_, i) => math //right upper -> left lower diagonal
+	.range(start = size - 1, end = 2 * size, step = size - 1, includeEnd = true) /*indices*/
+	.toArray().includes(i))
+```
+
+Now, with symmetry it's just (*reversing each row to flip the board vertically*):
+
+```javascript
+math.diag(Array(size).fill(0).map((_, i)=> math.row(board, i)[0].reverse()))
+```
+
+This feels good. We went from a bunch of language and domain specific constructs to abstract, mathematical utils. 
+
+*We then made good use of a supported and tested library instead of writing our own buggy, high maintenance code.*
+
+-----
 
 *Send a PR if you think of something better or more elegant*
 

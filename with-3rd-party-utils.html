@@ -30,7 +30,6 @@
             , diagonals)
 
     //--------------------------
-
     /* returns true if ANY slice of the board has a full streak of  'player' */
     const checkWin = player => boardSlices => boardSlices.reduce((acc, current) => acc || current.every(x => x == player), false)
     /*https://ramdajs.com/docs/#cond*/
