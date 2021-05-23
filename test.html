@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+</head>
+
+<body>
+    Test 123
+</body>
+<script>
+    /*utils*/
+    const VAdd = (v1, v2) => v1.map((e, i) => e + v2[i])
+    //assuming both are arrays and equal length
+
+    const selectIndices = (arr, idxs) => arr.filter((_, i) => idxs.includes(i))
+    //selects multiple indices from array (applies a mask)
+
+
+    const boardState = [2, 2, 1, 2, 1, 0, 1, 1, 2] //P1 wins
+    const size = 3
+
+    const baseV = Array(size).fill(0)
+    //helper struct for broadcasting / .mapping instead of for loops
+
+    const rowBase = baseV.map((_, i) => i * size) // [0, 3 , 6]
+    const colBase = baseV.map((_, i) => i) // [0, 1, 2]
+
+    const cIdxs = colBase.map(cIdx => VAdd(baseV.fill(cIdx), rowBase))
+    const rIdxs = rowBase.map(rIdx => VAdd(baseV.fill(rIdx), colBase))
+    console.log(rIdxs, cIdxs)
+
+    const diagIdx = [
+        baseV.map((_, i) => i * 4), //corner starting at upper left
+        baseV.map((_, i) => (size - 1) + i * 2) //corner starting at upper right 
+    ]
+
+    const boardSlices = [...rIdxs, ...cIdxs, ...diagIdx].map(idxs => selectIndices(boardState, idxs))
+    /* [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+  ];*/
+
+    let status = "Game is Still on"
+    for (const c of boardSlices) {
+        console.log(c)
+        if (!boardState.some(x => x == 0)) {
+            status = "It's a Draw (no more empty fields)"
+            break
+        }
+
+        if (c.every(x => x == 1)) {
+            status = "Player 1 Won"
+            break
+        }
+        else if (c.every(x => x == 2)) {
+            status = "Player 2 Won"
+            break
+        }
+    }
+
+    console.log("-----", status, "------")
+
+    console.log(boardSlices)
+
+
+
+    let rows = []
+    let columns = []
+
+    for (i = 0; i < size; i++) {
+
+        let rowidxs = []
+        let columnidxs = []
+        for (j = 0; j < size; j++) {
+
+            // console.log(rowStart, i)
+            rowidxs = rowidxs.concat(j + i * size)
+            columnidxs = columnidxs.concat(i + j * size)
+        }
+        rows = rows.concat([rowidxs])
+        columns = columns.concat([columnidxs])
+    }
+    let d1 = []
+    let d2 = []
+    for (i = 0; i < size; i++) {
+        d1 = d1.concat(i * (size+1)) //[0 -> 3 -> ]
+        d2 = d2.concat((size - 1) + i * (size + 1))
+    }
+    console.log(rows, columns)
+
+    /*with 3rd party utils*/
+
+    let board = math.reshape(boardState, [3, 3])
+
+    let diagonals = [
+        math.diag(board), //main diagonal 
+
+        boardState.filter((_, i) => math         //right upper -> left lower diagonal
+            .range(start = size - 1, end = 2 * size, step = 2, includeEnd = true) /*indices*/
+            .toArray().includes(i)),
+    ]
+
+    let boardSlices = Array(size).fill(0)
+        .reduce((acc, _, i) => acc.concat(
+            math.row(board, i),
+            [math.flatten(math.column(board, i))]) //columns return as [1] [2] [3] instead of [1 2 3]
+            , diagonals)
+
+    
+    /* returns true if ANY slice of the board has a full streak of  'player' */
+    const checkWin = player => boardSlices => boardSlices.reduce((acc, current) => acc || current.every(x => x == player), false)
+
+    /*https://ramdajs.com/docs/#cond*/
+    const getStatus = R.cond([
+        //[predicate, transformer]
+        [_ => !boardState.some(x => x == 0), () => 'Draw! (board is full)'], 
+
+        /*boardSlices are passed as input and call the predicate ala checkWin(1)(boardSlices) => true/false */
+        [checkWin(1), () => 'Player 1 Won'],
+        [checkWin(2), () => 'Player 2 Won ']
+    ]);
+    console.log(boardSlices, getStatus(boardSlices))
+
+
+
+</script>
+
+</html>

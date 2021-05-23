@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+</head>
+
+<body>
+    With utils
+</body>
+
+
+<script>
+    /*with 3rd party utils*/
+    const boardState = [2, 2, 1, 2, 2, 0, 1, 2, 1] //P2 wins
+    const size = 3 /* chose n */
+    const board = math.reshape(boardState, [3, 3])
+
+    const diagonals = [
+        math.diag(board), //main diagonal 
+        boardState.filter((_, i) => math //right upper -> left lower diagonal
+            .range(start = size - 1, end = 2 * size, step = 2, includeEnd = true) /*indices*/
+            .toArray().includes(i)),
+    ]
+
+    const boardSlices = Array(size).fill(0) //instead of for loop
+        .reduce((acc, _, i) => acc.concat(
+            math.row(board, i),
+            [math.flatten(math.column(board, i))]) //columns return as [1] [2] [3] instead of [1 2 3]
+            , diagonals)
+
+    /* returns true if ANY slice of the board has a full streak of  'player' */
+    const checkWin = player => boardSlices => boardSlices.reduce((acc, current) => acc || current.every(x => x == player), false)
+    /*https://ramdajs.com/docs/#cond*/
+    const getStatus = R.cond([
+        //[predicate, transformer]
+        [_ => !boardState.some(x => x == 0), () => 'Draw! (board is full)'],
+        /*boardSlices are passed as input and call the predicate ala checkWin(1)(boardSlices) => true/false */
+        [checkWin(1), () => 'Player 1 Won'],
+        [checkWin(2), () => 'Player 2 Won ']
+    ]);
+
+    console.log(boardSlices, getStatus(boardSlices))
+</script>
+
+</html>
