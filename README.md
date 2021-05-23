@@ -152,10 +152,10 @@ Here we use [math.js matrix](https://mathjs.org/docs/datatypes/matrices.html) to
     const boardSlices = Array(size).fill(0) //instead of for loop
         .reduce((acc, _, i) => acc.concat(
             math.row(board, i),
-            math.squeeze(math.column(board, i))]
-        ) , diagonals) //columns return as [1] [2] [3] instead of [1 2 3]
+            [math.squeeze(math.column(board, i))] //columns return as [1] [2] [3] so need extra processing
+        ) , diagonals) 
          
-    /*that's it for getting the (8 when 3x3) sections to iterate over*/
+    /*that's it for getting all the (8 when 3x3) board sections to iterate over*/
 ```
 
 
@@ -181,7 +181,7 @@ Then we're evaluating the board state to figure out the **game status**. We can 
 
 ## Better Ideas?
 
-I haven't found a way to abstract over that non-main diagonal, ()
+I haven't found a way to abstract over that non-main diagonal. I can imagine flipping the matrix vertically (it's symmetric counterpart) and then just using .diag again 
 
 
 
