@@ -8,9 +8,8 @@
 </head>
 
 <body>
-    With utils
+    With Ramda and Math.js for matrix operations
 </body>
-
 
 <script>
     /*with 3rd party utils*/
@@ -37,9 +36,11 @@
     const getStatus = R.cond([
         //[predicate, transformer]
         [_ => !boardState.some(x => x == 0), () => 'Draw! (board is full)'],
-        /*boardSlices are passed as input and call the predicate ala checkWin(1)(boardSlices) => true/false */
+        /*boardSlices are passed as input and call 
+        the predicate ala checkWin(1)(boardSlices) => true/false
+        */
         [checkWin(1), () => 'Player 1 Won'],
-        [checkWin(2), () => 'Player 2 Won ']
+        [checkWin(2), () => 'Player 2 Won']
     ]);
 
     console.log(boardSlices, getStatus(boardSlices))

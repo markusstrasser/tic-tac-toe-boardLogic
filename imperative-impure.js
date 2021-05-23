@@ -21,9 +21,9 @@ for (i = 0; i < size; i++) {
 
 let d1 = []
 let d2 = []
-for (i = 0; i < size; i++) {
-    d1 = d1.concat(i * (size + 1)) //[0 -> 3 -> ]
-    d2 = d2.concat((size - 1) + i * (size + 1))
+for (i = 0; i < size; i++) { // could be solved better with a "range" function like in python
+    d1 = d1.concat(i * (size + 1)) //[0 -> 4 -> 8 ] (3x3)
+    d2 = d2.concat((size - 1) + i * (size - 1)) //starts at 2 and does steps of 2 (3x3)
 }
 const boardSlices = [...rows, ...columns, d1, d2].map(idxs => selectIndices(boardState, idxs))
 
