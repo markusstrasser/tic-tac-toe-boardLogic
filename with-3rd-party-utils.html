@@ -17,14 +17,11 @@
     const size = 3 /* chose n */
     const board = math.reshape(boardState, [size, size])
 
-    const diagonals = [
+    const diagonals = [ /*leveraging symmetries but at a performance cost*/
         math.diag(board), //main diagonal 
-        boardState.filter((_, i) => math //right upper -> left lower diagonal
-            .range(start = size - 1, end = 2 * size, step = size - 1, includeEnd = true) /*indices*/
-            .toArray().includes(i))
-        /* i tried to flipping the matrix vertically to flip the diagonals, but somehow failed 
-        math.diag(Array(size).fill(0).map((_, i)=> math.squeeze(math.row(board, i).reverse()))) */
+        math.diag(Array(size).fill(0).map((_, i)=> math.row(board, i)[0].reverse()))
     ]
+    console.log(diagonals, "diagonals")
 
     const boardSlices = Array(size).fill(0) //instead of for loop
         .reduce((acc, _, i) => acc.concat(
