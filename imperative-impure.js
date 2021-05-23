@@ -25,6 +25,7 @@ for (i = 0; i < size; i++) { // could be solved better with a "range" function l
     d1 = d1.concat(i * (size + 1)) //[0 -> 4 -> 8 ] (3x3)
     d2 = d2.concat((size - 1) + i * (size - 1)) //starts at 2 and does steps of 2 (3x3)
 }
+//mapping indices (masks) to values in the boardState
 const boardSlices = [...rows, ...columns, d1, d2].map(idxs => selectIndices(boardState, idxs))
 
 //this is still imperative -- there's a cooler version in with-3rd-party-utils

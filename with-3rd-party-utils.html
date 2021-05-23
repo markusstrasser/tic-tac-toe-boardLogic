@@ -15,19 +15,19 @@
     /*with 3rd party utils*/
     const boardState = [2, 2, 1, 2, 2, 0, 1, 2, 1] //P2 wins
     const size = 3 /* chose n */
-    const board = math.reshape(boardState, [3, 3])
+    const board = math.reshape(boardState, [size, size])
 
     const diagonals = [
         math.diag(board), //main diagonal 
         boardState.filter((_, i) => math //right upper -> left lower diagonal
-            .range(start = size - 1, end = 2 * size, step = 2, includeEnd = true) /*indices*/
+            .range(start = size - 1, end = 2 * size, step = size-1, includeEnd = true) /*indices*/
             .toArray().includes(i)),
     ]
 
     const boardSlices = Array(size).fill(0) //instead of for loop
         .reduce((acc, _, i) => acc.concat(
             math.row(board, i),
-            [math.flatten(math.column(board, i))]) //columns return as [1] [2] [3] instead of [1 2 3]
+            [math.squeeze(math.column(board, i))]) //columns return as [1] [2] [3] instead of [1 2 3]
             , diagonals)
 
     /* returns true if ANY slice of the board has a full streak of  'player' */
