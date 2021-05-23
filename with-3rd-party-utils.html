@@ -20,15 +20,11 @@
     const diagonals = [
         math.diag(board), //main diagonal 
         boardState.filter((_, i) => math //right upper -> left lower diagonal
-            .range(start = size - 1, end = 2 * size, step = size-1, includeEnd = true) /*indices*/
+            .range(start = size - 1, end = 2 * size, step = size - 1, includeEnd = true) /*indices*/
             .toArray().includes(i))
-
         /* i tried to flipping the matrix vertically to flip the diagonals, but somehow failed 
         math.diag(Array(size).fill(0).map((_, i)=> math.squeeze(math.row(board, i).reverse()))) */
     ]
-    
-
-    console.log(diagonals, old )
 
     const boardSlices = Array(size).fill(0) //instead of for loop
         .reduce((acc, _, i) => acc.concat(
@@ -36,15 +32,14 @@
             [math.squeeze(math.column(board, i))]) //columns return as [1] [2] [3] instead of [1 2 3]
             , diagonals)
 
+    //--------------------------
+
     /* returns true if ANY slice of the board has a full streak of  'player' */
     const checkWin = player => boardSlices => boardSlices.reduce((acc, current) => acc || current.every(x => x == player), false)
     /*https://ramdajs.com/docs/#cond*/
-    const getStatus = R.cond([
-        //[predicate, transformer]
+    const getStatus = R.cond([ //[predicate, transformer]
         [_ => !boardState.some(x => x == 0), () => 'Draw! (board is full)'],
-        /*boardSlices are passed as input and call 
-        the predicate ala checkWin(1)(boardSlices) => true/false
-        */
+        /*boardSlices are passed as input and call the predicate ala checkWin(1)(boardSlices) => true/false*/
         [checkWin(1), () => 'Player 1 Won'],
         [checkWin(2), () => 'Player 2 Won']
     ]);

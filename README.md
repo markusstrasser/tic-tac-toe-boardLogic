@@ -10,9 +10,9 @@ Setup: Two players play on a **n** x **n** game board. You're given the board's 
 2: Player2
 ```
 
-The goal is for a given board state return if the game is won by P1, P2, a draw or still ongoing.
+The goal is for a given board state return if the game is won by P1, P2, a draw or still ongoing. 
 
-
+Here are some perspectives on the problem: imperative, vanilla functional, boosted functional (libs):
 
 ## First Iteration: Imperative with mutative and impure for-loops (🤮)
 
@@ -125,7 +125,7 @@ const boardSlices = [...rIdxs, ...cIdxs, ...diagIdx].map(idxs => selectIndices(b
 
 
 
-## Third Iteration: add 3rd-party utilities
+## Third Iteration: add 3rd-party utilities and use tested APIs
 
 `/with-3rd-party-utils.html`
 
@@ -158,8 +158,6 @@ Here we use [math.js matrix](https://mathjs.org/docs/datatypes/matrices.html) to
     /*that's it for getting all the (8 when 3x3) board sections to iterate over*/
 ```
 
-
-
 Then we're evaluating the board state to figure out the **game status**. We can use ramda's **cond** function instead of what we had before. *This is more elegant, composable and readable for my taste.*
 
 ```javascript
@@ -177,16 +175,11 @@ Then we're evaluating the board state to figure out the **game status**. We can 
     console.log(boardSlices, getStatus(boardSlices))
 ```
 
-
+Good luck with finding a more elegant solution for this problem - I haven't seen anything this compact and composed on the web.
 
 ## Better Ideas?
 
-I haven't found a way to abstract over that non-main diagonal. I can imagine flipping the matrix vertically (it's symmetric counterpart) and then just using .diag again 
+Last problem: **I haven't found a way to abstract over that non-main diagonal in a clean paradigmatic/mathematically sound way**. I could imagine flipping the matrix vertically and then using `.diag` again on the symmetric counterpart, but didn't find the method in the lib that can do that.
 
+*Send a PR if you think of something better or more elegant*
 
-
-
-
-
-
-*If you*
