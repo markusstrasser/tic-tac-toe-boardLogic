@@ -155,7 +155,7 @@ Here we use [math.js matrix](https://mathjs.org/docs/datatypes/matrices.html) to
          
     /*that's it for getting all the (8 when 3x3) board sections to iterate over*/
 ```
-
+# Evaluate Game State
 Then we're evaluating the board state to figure out the **game status**. We can use ramda's **cond** function instead of what we had before. *This is more elegant, composable and readable for my taste.*
 
 ```javascript
